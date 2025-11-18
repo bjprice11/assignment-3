@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Add User</title>
+    </head>
+    <body>
+        <% if (typeof error_message !== 'undefined' && error_message) { %>
+            <p style="color:red;"><%= error_message %></p>
+        <% } %>
+        <form action="/addUser" method="post">
+            <label for="username">User Name: </label>
+            <input type="text" id="username" name="username" required>
+            <br><br>
+            <label for="password">Password: </label>
+            <input type="text" id="password" name="password" required>
+            <br><br>
+            <label>Level:</label>
+            <br><br>
+            <label for="level">Manager: </label>
+            <input type="radio" id="Manager" name="level" value = "M" required>
+            <br><br>
+            <label for="level">User: </label>
+            <input type="radio" id="User" name="level" value = "U" required>
+            <br><br>
+            <input type="submit" value="Save User">
+        </form>
+        <br>
+        <a href="/users">Back to Users</a>
+    </body>
+</html>

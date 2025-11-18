@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit User</title>
+    </head>
+    <body>
+        <h1>Edit User</h1>
+        <% if (typeof error_message !== 'undefined' && error_message) { %>
+            <p style="color:red;"><%= error_message %></p>
+        <% } %>
+        <form action="/editUser/<%= user.username %>" method="post">
+            <label for="originalUsername">Old User Name: </label>
+            <input type="text" id="originalUsername" name="originalUsername" value="<%= user.username %>" readonly>
+            <br><br>
+            <label for="username">New User Name: </label>
+            <input type="text" id="username" name="username" value="<%= user.username %>" required>
+            <br><br>
+            <label for="originalPassword">Old Password: </label>
+            <input type="text" id="originalPassword" name="originalPassword" value="<%= user.password %>" readonly>
+            <br><br>
+            <label for="password">New Password: </label>
+            <input type="text" id="password" name="password" value="<%= user.password %>" required>
+            <br><br>
+            <label for="oldLevel">Old Level:</label>
+            <input type="text" id="oldLevel" name="oldLevel" value="<%= user.level %>" readonly>
+            <label for="level">New Level: </label> 
+            <select id="level" name="level" required>
+                <option value="M" <%= user.level === 'M' ? 'selected' : '' %>>Manager</option>
+                <option value="U" <%= user.level === 'U' ? 'selected' : '' %>>User</option>
+            </select>
+            <br><br>
+            <input type="submit" value="Update User">
+        </form>
+        <br>
+        <a href="/users">Back to Users</a>
+    </body>
+</html>
