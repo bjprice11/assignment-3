@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Users List</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        <style>
+            :root {
+                --pokemon-red: #CC0000;
+                --pokemon-dark: #333333;
+                --pokemon-light-grey: #f8f9fa;
+                --pokemon-border: #dee2e6;
+            }
+            body {
+                background-color: #f0f0f0; /* Light grey page background */
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            }
+            .content-wrapper {
+                background-color: #ffffff;
+                padding: 2.5rem;
+                border-radius: 15px;
+                box-shadow: 0 6px 20px rgba(0,0,0,0.07);
+                margin-top: 2rem;
+                margin-bottom: 2rem;
+            }
+            h1 {
+                color: var(--pokemon-red);
+                font-weight: 700;
+                text-align: center;
+                border-bottom: 3px solid var(--pokemon-dark);
+                padding-bottom: 15px;
+                margin-bottom: 2rem !important;
+                text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+            }
+            .table thead th {
+                 background-color: var(--pokemon-dark);
+                 color: white;
+                 border-color: #000;
+                 text-transform: uppercase;
+                 letter-spacing: 0.5px;
+            }
+            .table-striped > tbody > tr:nth-of-type(odd) > * {
+                background-color: var(--pokemon-light-grey);
+            }
+            .table-hover tbody tr:hover {
+                background-color: #ffebeb; /* Light red on hover */
+            }
+            fieldset {
+                background-color: var(--pokemon-light-grey);
+                border: 1px solid var(--pokemon-border);
+                padding: 1.5rem;
+                border-radius: 8px;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            legend {
+                font-size: 1.35rem;
+                font-weight: 600;
+                color: var(--pokemon-dark);
+                padding-bottom: 0.5rem;
+            }
+            .form-label {
+                font-weight: 500;
+                color: #555;
+            }
+            .btn-danger {
+                background-color: var(--pokemon-red);
+                border-color: var(--pokemon-red);
+                font-weight: 600;
+                padding: 0.75rem;
+            }
+            .btn-danger:hover {
+                background-color: #a00000;
+                border-color: #a00000;
+            }
+        </style>
+        </head>
+    <body>
+        
+        <div class="container content-wrapper">
+            <h1 class="mb-4">Users List</h1>
+            
+            <div class="row">
+                
+                <div class="col-md-7">
+                    <% 
+                        if (typeof level !== 'undefined' && level === "M") { 
+                    %>
+                        <div class="d-flex justify-content-end mb-3">
+                            <a href="/addUser" class="btn btn-primary" method ="GET">
+                                + Add New User
+                            </a>
+                        </div>
+                    <% } %>
+                    
+                    <% if (typeof error_message !== 'undefined' && error_message) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= error_message %>
+                        </div>
+                    <% } %>
+            
+                    <% if (users.length === 0) { %>
+                        <div class="alert alert-warning" role="alert">
+                            No users found in the database.
+                        </div>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover table-bordered">
+                                <thead> 
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Password</th>
+                                        <th>Level</th>
+                                        <th>Delete</th>
+                                        <th>Edit</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (let iCount = 0; iCount < users.length; iCount++) { %>
+                                        <tr>
+                                            <td><%= users[iCount].username %></td>
+                                            <td><%= users[iCount].password %></td>
+                                            <td><%= users[iCount].level %></td>
+                                            <td>
+                                                <form action="/deleteUser/<%= users[iCount].username %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                <form action="/editUser/<%= users[iCount].username %>" method="GET">
+                                                    <button type="submit" class="btn btn-secondary btn-sm">Edit</button>
+                                                </form>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+
+                
+            </div> 
+        </div> 
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
