@@ -18,6 +18,7 @@ app.set("view engine", "ejs");
 // Set the port to port 3001 or the environment port
 const port = process.env.PORT || 3001;
 
+// Set the public directory for static files
 app.use(
     session(
         {
@@ -43,6 +44,7 @@ const knex = require("knex")({
 // sets so all of the data is set into an array
 app.use(express.urlencoded({extended: true}));
 
+// sets the public directory for static files
 app.use((req, res, next) => {
     // Skip authentication for login routes
     if (req.path === '/' || req.path === '/login' || req.path === '/logout') {
@@ -76,6 +78,13 @@ app.get("/", (req, res) => {
  })
 ;
 
+// View Users route - redirects to users view
+app.get("/viewUsers", (req, res) => {
+    res.redirect("/users");
+});
+
+
+// Users page route - notice it checks if they have logged in
 app.get("/users", (req, res) => {
     if (req.session.isLoggedIn){
     knex.select().from("user") // selects all from the user table
@@ -90,10 +99,23 @@ app.get("/users", (req, res) => {
     }
  });
 
+ // Logout route - destroys the session and redirects to login
+app.get("/logout", (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            console.error("Error destroying session:", err);
+        }
+        res.redirect("/login");
+    });
+});
 
+app.get("/login", (req, res) => {
+    // This route is needed to display the login form when a user is redirected 
+    // to it (e.g., after logout or due to the middleware blocking access).
+    res.render("login", { error_message: "" });
+});
 
 // This creates attributes in the session object to keep track of user and if they logged in
-// Assuming 'pp.post' was a typo for 'app.post'
 app.post("/login", (req, res) => {
     let sName = req.body.username;
     let sPassword = req.body.password;
@@ -103,7 +125,7 @@ app.post("/login", (req, res) => {
     .from("user")
     .where("username", sName)
     .andWhere("password", sPassword)
-    .andWhere("level", sLevel) // Query already checks all three
+    .andWhere("level", sLevel) // Checks all three
     .then(users => {
       // Check if ANY user was found with that exact combination
       if (users.length > 0) {
@@ -111,7 +133,7 @@ app.post("/login", (req, res) => {
         req.session.isLoggedIn = true;
         req.session.username = sName;
         req.session.level = sLevel; 
-          res.redirect("/users");
+          res.redirect("/");
         } else {
           // Should not happen if your form is correct, but good to have
           res.render("login", { error_message: "Invalid Login." });
@@ -124,6 +146,7 @@ app.post("/login", (req, res) => {
     });
 });
 
+// Add User route - displays the add user form and handles form submission
 app.get("/addUser", (req, res) => {
     if(req.session.isLoggedIn){
     res.render("createUser");
@@ -133,6 +156,8 @@ app.get("/addUser", (req, res) => {
     }
 });
 
+
+//creates a new uses in the database
 app.post("/addUser", (req, res) => {
     const {username, password, level} = req.body;
     const newUser = {    // builds record with the same structure as the table
@@ -147,6 +172,8 @@ app.post("/addUser", (req, res) => {
     })
 });
 
+
+// Deletes a user from the database
 app.post("/deleteUser/:username",  (req, res) => {
     const deleteUser = req.params.username;
 
@@ -157,6 +184,8 @@ app.post("/deleteUser/:username",  (req, res) => {
     })
 });
 
+
+// Edits a user in the database
 app.get("/editUser/:username", (req, res) => {
     const editUsername = req.params.username;
     
@@ -175,6 +204,7 @@ app.get("/editUser/:username", (req, res) => {
 
 });
 
+// Updates the user in the database
 app.post("/editUser/:username", (req, res) => {
     const upUsername = req.params.username
     const { username, password, level } = req.body;
